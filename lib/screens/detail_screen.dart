@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webtoon/models/webtoon_episode_model.dart';
 import 'package:webtoon/models/webtoon_model.dart';
 import 'package:webtoon/models/webtoon_model_detail.dart';
@@ -21,13 +22,24 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late Future<WebtoonDetailModel> webtoonDetail;
   late Future<List<WebtoonEpisodeModel>> episodes;
+  late SharedPreferences prefs;
+
+  Future initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    final linkedToons = prefs.getStringList('likedToons');
+
+    if (linkedToons != null) {
+    } else {
+      await prefs.setStringList('likedToon', []);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-
     webtoonDetail = ApiService.getToonById(widget.webtoon.id);
     episodes = ApiService.getEpisodesById(widget.webtoon.id);
+    initPrefs();
   }
 
   @override
@@ -47,6 +59,10 @@ class _DetailScreenState extends State<DetailScreen> {
           widget.webtoon.title,
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
         ),
+        actions: [
+          IconButton(
+              onPressed: () {}, icon: Icon(Icons.favorite_outline_outlined))
+        ],
       ),
       body: Center(
         child: Padding(
@@ -136,7 +152,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               Episode(
                                 unescape: unescape,
                                 epi: epi,
-                                webtoon: widget.webtoon,
+                                webtoonId: widget.webtoon.id,
                               )
                           ],
                         ),
