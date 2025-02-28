@@ -5,6 +5,7 @@ import 'package:webtoon/models/webtoon_episode_model.dart';
 import 'package:webtoon/models/webtoon_model.dart';
 import 'package:webtoon/models/webtoon_model_detail.dart';
 import 'package:webtoon/services/api_service.dart';
+import 'package:webtoon/widgets/common_appbar.dart';
 import 'package:webtoon/widgets/episode_widget.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -22,15 +23,22 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late Future<WebtoonDetailModel> webtoonDetail;
   late Future<List<WebtoonEpisodeModel>> episodes;
-  late SharedPreferences prefs;
+  late SharedPreferencesAsync prefs;
+
+  bool isLiked = false;
 
   Future initPrefs() async {
-    prefs = await SharedPreferences.getInstance();
-    final linkedToons = prefs.getStringList('likedToons');
+    prefs = SharedPreferencesAsync();
+    final likedToons = await prefs.getStringList('likedToons');
 
-    if (linkedToons != null) {
+    if (likedToons != null) {
+      if (likedToons.contains(widget.webtoon.id)) {
+        setState(() {
+          isLiked = true;
+        });
+      }
     } else {
-      await prefs.setStringList('likedToon', []);
+      await prefs.setStringList('likedToons', []);
     }
   }
 
@@ -42,26 +50,36 @@ class _DetailScreenState extends State<DetailScreen> {
     initPrefs();
   }
 
+  onFavoriteTap() async {
+    final likedToons = await prefs.getStringList('likedToons');
+    if (isLiked) {
+      likedToons!.remove(widget.webtoon.id);
+    } else {
+      likedToons!.add(widget.webtoon.id);
+    }
+    await prefs.setStringList('likedToons', likedToons);
+    setState(() {
+      isLiked = !isLiked;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final unescape = HtmlUnescape();
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 4,
-        shadowColor: Colors.black,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.green,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          widget.webtoon.title,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
-        ),
+      appBar: appBar(
+        title: widget.webtoon.title,
         actions: [
           IconButton(
-              onPressed: () {}, icon: Icon(Icons.favorite_outline_outlined))
+            onPressed: onFavoriteTap,
+            icon: Icon(
+              isLiked
+                  ? Icons.favorite_outlined
+                  : Icons.favorite_outline_outlined,
+            ),
+          ),
         ],
       ),
       body: Center(
@@ -159,7 +177,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                     );
                   }
-                  return Container();
+                  return CircularProgressIndicator();
                 },
               )
             ],

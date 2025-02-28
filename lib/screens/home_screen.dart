@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webtoon/models/webtoon_model.dart';
+import 'package:webtoon/screens/favorites_area.dart';
 import 'package:webtoon/services/api_service.dart';
+import 'package:webtoon/widgets/common_appbar.dart';
 import 'package:webtoon/widgets/webtoon_widget.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,18 +14,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 4,
-        shadowColor: Colors.black,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.green,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          "오늘의 웹툰!",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
-        ),
-      ),
+      appBar: appBar(title: '오늘의 웹툰!'),
       body: FutureBuilder(
         future: webtoons,
         builder: (context, snapshot) {
@@ -33,8 +24,13 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(
                   height: 50,
                 ),
-                Expanded(
+                Flexible(
+                  fit: FlexFit.tight,
                   child: makeList(snapshot),
+                ),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: FavoritesArea(),
                 ),
               ],
             );
