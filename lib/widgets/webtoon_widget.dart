@@ -3,25 +3,27 @@ import 'package:webtoon/models/webtoon_model.dart';
 import 'package:webtoon/screens/detail_screen.dart';
 
 class Webtoon extends StatelessWidget {
+  final WebtoonModel webtoon;
+  final VoidCallback? onDetailClosed;
+
   const Webtoon({
     super.key,
     required this.webtoon,
+    this.onDetailClosed,
   });
-
-  final WebtoonModel webtoon;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DetailScreen(
-              webtoon: webtoon,
-            ),
+            builder: (context) => DetailScreen(webtoon: webtoon),
           ),
         );
+        // DetailScreen에서 돌아오면 콜백 호출
+        onDetailClosed?.call();
       },
       child: Column(
         children: [

@@ -5,10 +5,17 @@ import 'package:webtoon/services/api_service.dart';
 import 'package:webtoon/widgets/common_appbar.dart';
 import 'package:webtoon/widgets/webtoon_widget.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToon();
+  final GlobalKey<FavoritesAreaState> favoritesKey =
+      GlobalKey<FavoritesAreaState>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +37,10 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Flexible(
                   fit: FlexFit.loose,
-                  child: FavoritesArea(),
+                  child: FavoritesArea(
+                    key: favoritesKey,
+                    snapshot,
+                  ),
                 ),
               ],
             );
@@ -55,7 +65,13 @@ class HomeScreen extends StatelessWidget {
       itemCount: snapshot.data!.length,
       itemBuilder: (context, index) {
         var webtoon = snapshot.data![index];
-        return Webtoon(webtoon: webtoon);
+        return Webtoon(
+          webtoon: webtoon,
+          onDetailClosed: () {
+            // DetailScreen에서 돌아오면 FavoritesArea 갱신
+            favoritesKey.currentState?.initPrefs();
+          },
+        );
       },
       separatorBuilder: (context, index) {
         return SizedBox(
