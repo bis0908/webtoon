@@ -60,7 +60,6 @@ class FavoritesAreaState extends State<FavoritesArea> {
         for (var webtoon in likedWebtoons)
           Card(
             elevation: 2,
-            color: Colors.green.shade100,
             margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
