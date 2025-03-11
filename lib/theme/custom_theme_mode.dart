@@ -17,6 +17,8 @@ class CustomThemeMode {
         isDark.value = false;
         break;
       default:
+        themeMode.value = ThemeMode.system;
+        isDark.value = true;
     }
   }
 

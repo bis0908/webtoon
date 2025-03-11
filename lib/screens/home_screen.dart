@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webtoon/models/webtoon_model.dart';
 import 'package:webtoon/screens/favorites_area.dart';
 import 'package:webtoon/services/api_service.dart';
-import 'package:webtoon/theme/custom_theme_mode.dart';
+import 'package:webtoon/theme/switch_theme.dart';
 import 'package:webtoon/widgets/common_appbar.dart';
 import 'package:webtoon/widgets/webtoon_widget.dart';
 
@@ -22,15 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(title: '오늘의 웹툰!', actions: [
-        IconButton(
-          onPressed: () {
-            CustomThemeMode.change();
-            setState(() {});
-          },
-          icon: Icon(
-            CustomThemeMode.isDark.value ? Icons.dark_mode : Icons.light_mode,
-          ),
-        ),
+        switchTheme(),
       ]),
       body: FutureBuilder(
         future: webtoons,

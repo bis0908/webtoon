@@ -5,6 +5,7 @@ import 'package:webtoon/models/webtoon_episode_model.dart';
 import 'package:webtoon/models/webtoon_model.dart';
 import 'package:webtoon/models/webtoon_model_detail.dart';
 import 'package:webtoon/services/api_service.dart';
+import 'package:webtoon/theme/switch_theme.dart';
 import 'package:webtoon/widgets/common_appbar.dart';
 import 'package:webtoon/widgets/episode_widget.dart';
 
@@ -68,10 +69,10 @@ class _DetailScreenState extends State<DetailScreen> {
     final unescape = HtmlUnescape();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: appBar(
         title: widget.webtoon.title,
         actions: [
+          switchTheme(),
           IconButton(
             onPressed: onFavoriteTap,
             icon: Icon(
