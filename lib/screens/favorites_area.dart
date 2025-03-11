@@ -93,7 +93,6 @@ class FavoritesAreaState extends State<FavoritesArea> {
                     ),
                     Icon(
                       Icons.arrow_forward_rounded,
-                      color: Colors.grey.shade600,
                       size: 20,
                     ),
                   ],

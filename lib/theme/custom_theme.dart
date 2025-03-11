@@ -7,6 +7,9 @@ class CustomTheme {
       foregroundColor: Colors.grey[300],
     ),
     scaffoldBackgroundColor: Colors.grey[700],
+    iconTheme: IconThemeData(
+      color: Colors.grey[400],
+    ),
     colorScheme: ColorScheme(
       brightness: Brightness.dark,
       primary: Colors.grey[800]!,

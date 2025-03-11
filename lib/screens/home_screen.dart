@@ -50,8 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
             return Text('${snapshot.error}');
           }
           return Center(
-            child: CircularProgressIndicator(),
-          );
+              // child: CircularProgressIndicator(),
+              );
         },
       ),
     );
