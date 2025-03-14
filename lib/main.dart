@@ -1,16 +1,34 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:webtoon/screens/home_screen.dart';
 import 'package:webtoon/theme/custom_theme.dart';
 import 'package:webtoon/theme/custom_theme_mode.dart';
+import 'package:webtoon/common/banner_example.dart';
 
 void main() {
-  // 1. 앱 시작 시 위젯 바인딩 초기화
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  // 2. 스플래시 화면 유지
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  // 전역 오류 핸들러 등록
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint('Flutter 오류: ${details.exception}');
+    debugPrint('스택 트레이스: ${details.stack}');
+  };
 
-  runApp(const MainApp());
+  // 비동기 오류 처리
+  runZonedGuarded(() {
+    // 1. 앱 시작 시 위젯 바인딩 초기화
+    WidgetsFlutterBinding.ensureInitialized();
+    // 2. 스플래시 화면 유지 (비동기 대기 없이 바로 실행)
+    FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
+
+    // 앱 즉시 실행 (초기화 대기 없음)
+    runApp(const MainApp());
+  }, (error, stack) {
+    debugPrint('비동기 오류: $error');
+    debugPrint('스택 트레이스: $stack');
+  });
 }
 
 class MainApp extends StatefulWidget {
@@ -20,24 +38,76 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends State<MainApp> {
+class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
+  bool _adsInitialized = false;
+
   @override
   void initState() {
     super.initState();
-    // 3. 앱 초기화 후 스플래시 화면 제거
-    // 데이터 로딩이 필요한 경우 비동기 작업 후 remove() 호출
+    WidgetsBinding.instance.addObserver(this);
+
+    // 앱 초기화 작업 시작 (비동기적으로 실행)
+    _initializeApp();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // 앱 상태 변경 감지 (백그라운드에서 포그라운드로 돌아올 때 등)
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && !_adsInitialized && !kIsWeb) {
+      // 앱이 다시 활성화되었을 때 광고가 초기화되지 않았다면 다시 시도
+      _initializeAds();
+    }
+  }
+
+  // 앱 초기화 작업을 비동기적으로 처리
+  Future<void> _initializeApp() async {
+    // 광고 초기화 (웹이 아닌 경우에만)
+    if (!kIsWeb) {
+      _initializeAds();
+    }
+
+    // 스플래시 화면 제거 (광고 초기화 완료를 기다리지 않음)
     _removeSplashScreen();
   }
 
-  // 4. 필요한 초기화 작업 후 스플래시 제거
-  Future<void> _removeSplashScreen() async {
+  // 스플래시 화면 제거
+  void _removeSplashScreen() {
     try {
-      // 초기화 작업
-      await Future.delayed(Duration(seconds: 0));
-    } catch (e) {
-      print('초기화 중 오류 발생: $e');
-    } finally {
       FlutterNativeSplash.remove();
+    } catch (e) {
+      debugPrint('스플래시 화면 제거 중 오류 발생: $e');
+    }
+  }
+
+  // 광고 초기화 (비동기적으로 처리, 실패해도 앱 실행에 영향 없음)
+  Future<void> _initializeAds() async {
+    if (_adsInitialized) return;
+
+    try {
+      bool isInitialized = false;
+
+      // 타임아웃 설정
+      Timer? timeoutTimer = Timer(Duration(seconds: 5), () {
+        if (!isInitialized) {
+          debugPrint('모바일 광고 초기화 타임아웃');
+        }
+      });
+
+      // 광고 초기화
+      await MobileAds.instance.initialize();
+      isInitialized = true;
+      _adsInitialized = true;
+      timeoutTimer.cancel();
+
+      debugPrint('모바일 광고 초기화 완료');
+    } catch (e) {
+      debugPrint('모바일 광고 초기화 실패: $e');
     }
   }
 
@@ -47,6 +117,7 @@ class _MainAppState extends State<MainApp> {
       valueListenable: CustomThemeMode.themeMode,
       builder: (context, themeMode, child) {
         return MaterialApp(
+          navigatorKey: NavigationService.navigatorKey,
           darkTheme: CustomTheme.dark,
           theme: CustomTheme.light,
           themeMode: themeMode,
