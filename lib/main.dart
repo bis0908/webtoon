@@ -69,7 +69,8 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   Future<void> _initializeApp() async {
     // 광고 초기화 (웹이 아닌 경우에만)
     if (!kIsWeb) {
-      _initializeAds();
+      // 광고 초기화를 별도 스레드에서 실행하여 UI 블로킹 방지
+      Future.microtask(() => _initializeAds());
     }
 
     // 스플래시 화면 제거 (광고 초기화 완료를 기다리지 않음)
@@ -96,18 +97,27 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
       Timer? timeoutTimer = Timer(Duration(seconds: 5), () {
         if (!isInitialized) {
           debugPrint('모바일 광고 초기화 타임아웃');
+          // 타임아웃 시 초기화 실패로 처리하고 계속 진행
+          _adsInitialized = true; // 재시도 방지
         }
       });
 
-      // 광고 초기화
-      await MobileAds.instance.initialize();
-      isInitialized = true;
-      _adsInitialized = true;
-      timeoutTimer.cancel();
-
-      debugPrint('모바일 광고 초기화 완료');
+      // 간소화된 초기화 방식 사용
+      try {
+        // 테스트 기기 설정 없이 기본 초기화만 수행
+        await MobileAds.instance.initialize();
+        isInitialized = true;
+        _adsInitialized = true;
+        timeoutTimer.cancel();
+        debugPrint('모바일 광고 초기화 완료');
+      } catch (e) {
+        debugPrint('광고 초기화 실패: $e');
+        _adsInitialized = true; // 재시도 방지
+      }
     } catch (e) {
       debugPrint('모바일 광고 초기화 실패: $e');
+      // 초기화 실패해도 앱은 계속 실행
+      _adsInitialized = true; // 재시도 방지
     }
   }
 

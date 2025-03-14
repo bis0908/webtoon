@@ -30,14 +30,15 @@ class Webtoon extends StatelessWidget {
           Hero(
             tag: webtoon.id,
             child: Container(
-              width: 250,
+              width: 180,
+              height: 180,
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     BoxShadow(
-                      blurRadius: 20,
-                      offset: Offset(10, 10),
+                      blurRadius: 15,
+                      offset: Offset(5, 5),
                       color: Colors.black26,
                     )
                   ]),
@@ -48,6 +49,7 @@ class Webtoon extends StatelessWidget {
                   "User-Agent":
                       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
                 },
+                fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Center(child: CircularProgressIndicator());
@@ -67,12 +69,16 @@ class Webtoon extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           Text(
             webtoon.title,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

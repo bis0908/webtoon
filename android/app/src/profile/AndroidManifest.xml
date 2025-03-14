@@ -5,11 +5,11 @@
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
   
-    <!-- <application>
+    <application>
+        <!-- 앱 ID 설정 -->
         <meta-data
-            android:name="com.google.android.gms.ads.ca-app-pub-9465556807993641~6161471288"
-            android:value="ca-app-pub-3940256099942544/9214589741"
-        />
-    </application> -->
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
+    </application>
 
 </manifest>

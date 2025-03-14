@@ -52,20 +52,49 @@ class FavoritesAreaState extends State<FavoritesArea> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(
-          Icons.favorite,
-          color: Colors.red,
-          size: 30,
-        ),
+        // 즐겨찾기 목록이 비어있는 경우 안내 메시지 표시
+        if (likedWebtoons.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 36,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '즐겨찾기한 웹툰이 없습니다.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '웹툰 상세 페이지에서 하트 아이콘을 눌러 즐겨찾기에 추가해보세요!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        // 즐겨찾기 웹툰 목록
         for (var webtoon in likedWebtoons)
           Card(
-            elevation: 2,
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            elevation: 1,
+            margin: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: InkWell(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               onTap: () async {
                 await Navigator.push(
                   context,
@@ -77,15 +106,22 @@ class FavoritesAreaState extends State<FavoritesArea> {
                 initPrefs();
               },
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                      size: 14,
+                    ),
+                    SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         webtoon.title,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -93,13 +129,15 @@ class FavoritesAreaState extends State<FavoritesArea> {
                     ),
                     Icon(
                       Icons.arrow_forward_rounded,
-                      size: 20,
+                      size: 16,
                     ),
                   ],
                 ),
               ),
             ),
           ),
+        // 하단 여백 추가
+        SizedBox(height: 8),
       ],
     );
   }
