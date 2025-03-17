@@ -294,7 +294,7 @@ class _AdBannerWidgetState extends State<AdBannerWidget>
           color: Theme.of(context).cardColor,
           border: Border(
             top: BorderSide(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.shade200,
               width: 1,
             ),
           ),
@@ -311,7 +311,7 @@ class _AdBannerWidgetState extends State<AdBannerWidget>
         color: Theme.of(context).cardColor,
         border: Border(
           top: BorderSide(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.shade200,
             width: 1,
           ),
         ),

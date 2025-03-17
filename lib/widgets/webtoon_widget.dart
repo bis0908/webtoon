@@ -31,7 +31,7 @@ class Webtoon extends StatelessWidget {
             tag: webtoon.id,
             child: Container(
               width: 180,
-              height: 180,
+              height: 250,
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
@@ -55,10 +55,10 @@ class Webtoon extends StatelessWidget {
                   return Center(child: CircularProgressIndicator());
                 },
                 errorBuilder: (context, error, stackTrace) {
-                  print('이미지 로딩 에러: $error');
+                  debugPrint('이미지 로딩 에러: $error');
                   return Container(
                     width: 100,
-                    height: 150,
+                    height: 250,
                     color: Colors.grey.shade300,
                     child: Icon(
                       Icons.error,

@@ -6,7 +6,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:webtoon/screens/home_screen.dart';
 import 'package:webtoon/theme/custom_theme.dart';
 import 'package:webtoon/theme/custom_theme_mode.dart';
-import 'package:webtoon/common/banner_example.dart';
+import 'package:webtoon/ad/banner_example.dart';
 
 void main() {
   // 전역 오류 핸들러 등록
@@ -127,7 +127,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
       valueListenable: CustomThemeMode.themeMode,
       builder: (context, themeMode, child) {
         return MaterialApp(
-          navigatorKey: NavigationService.navigatorKey,
+          // navigatorKey: NavigationService.navigatorKey,
           darkTheme: CustomTheme.dark,
           theme: CustomTheme.light,
           themeMode: themeMode,
