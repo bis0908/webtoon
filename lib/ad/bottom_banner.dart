@@ -83,11 +83,17 @@ class _BottomBannerState extends State<BottomBanner> {
           });
         },
         // 광고가 화면을 덮는 오버레이를 열 때 호출.
-        onAdOpened: (Ad ad) {},
+        onAdOpened: (Ad ad) {
+          debugPrint('배너 광고 열림');
+        },
         // 광고가 화면을 덮는 오버레이를 제거할 때 호출.
-        onAdClosed: (Ad ad) {},
+        onAdClosed: (Ad ad) {
+          debugPrint('배너 광고 닫힘');
+        },
         // 광고에 노출이 발생하면 호출.
-        onAdImpression: (Ad ad) {},
+        onAdImpression: (Ad ad) {
+          debugPrint('배너 광고 노출됨');
+        },
       ),
     )..load();
   }

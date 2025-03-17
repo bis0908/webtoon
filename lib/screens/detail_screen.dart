@@ -158,7 +158,7 @@ class _DetailScreenState extends State<DetailScreen> {
                             ],
                           );
                         }
-                        return Container();
+                        return SizedBox.shrink();
                       },
                     ),
                     SizedBox(

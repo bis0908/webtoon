@@ -6,7 +6,8 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:webtoon/screens/home_screen.dart';
 import 'package:webtoon/theme/custom_theme.dart';
 import 'package:webtoon/theme/custom_theme_mode.dart';
-import 'package:webtoon/ad/banner_example.dart';
+import 'package:webtoon/widgets/exit_dialog.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   // 전역 오류 핸들러 등록
@@ -94,7 +95,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
       bool isInitialized = false;
 
       // 타임아웃 설정
-      Timer? timeoutTimer = Timer(Duration(seconds: 5), () {
+      Timer? timeoutTimer = Timer(Duration(seconds: 1), () {
         if (!isInitialized) {
           debugPrint('모바일 광고 초기화 타임아웃');
           // 타임아웃 시 초기화 실패로 처리하고 계속 진행
@@ -127,13 +128,38 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
       valueListenable: CustomThemeMode.themeMode,
       builder: (context, themeMode, child) {
         return MaterialApp(
-          // navigatorKey: NavigationService.navigatorKey,
           darkTheme: CustomTheme.dark,
           theme: CustomTheme.light,
           themeMode: themeMode,
-          home: HomeScreen(),
+          home: const RootScreen(),
         );
       },
+    );
+  }
+}
+
+class RootScreen extends StatelessWidget {
+  const RootScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) return;
+
+        final shouldPop = await showDialog<bool>(
+          context: context,
+          builder: (context) => const ExitDialog(),
+        );
+
+        if (shouldPop ?? false) {
+          SystemNavigator.pop();
+          return;
+        }
+        return;
+      },
+      child: HomeScreen(),
     );
   }
 }
